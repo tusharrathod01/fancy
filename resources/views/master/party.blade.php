@@ -2,6 +2,27 @@
 @section('content')
     <section class="content">
         <div class="container-fluid">
+            <div class=pl-2 pr-2">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="text-center">
+                                <div class="col-md-12">
+                                    <div class="form-group row">
+                                        <label class="col-form-label slabel">Name</label>
+                                        <div class="input-group l-input">
+                                            <input type="text" class="form-control seach_input" id="seach_Party">
+                                        </div>
+                                    </div>
+                                    <button type="button" id="seach" class="btn">
+                                        SEARCH</button>
+                                    <button type="button" onclick="reset()" class="btn">NEW</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <form method="POST" action="{{ route('save.party') }}" id="party_form" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="hiddenId">
@@ -473,7 +494,7 @@
         $('#currency').on('change', updateCurrencyRate);
 
         function partys() {
-            $("#name").autocomplete({
+            $("#seach_Party").autocomplete({
                 source: function(request, response) {
                     $.getJSON("{{ route('get.partys') }}?q=" + request.term, function(data) {
                         response($.map(data, function(value, key) {
@@ -490,7 +511,9 @@
                 autoFocus: true,
                 select: function(event, ui) {
                     $(event).val(ui.item.label);
-                    get_details(ui.item.label);
+                    $("#seach").on('click', function() {
+                        get_details(ui.item.label);
+                    });
                 },
             });
         }
@@ -617,7 +640,8 @@
             $('#party_form')[0].reset();
             $('#state').prop('disabled', true);
             $('#city').prop('disabled', true);
-            document.getElementById('preview').style.display = 'none';
+            $('#preview').hide().attr('src', '');
+            $('#seach_Party').val('');
         }
 
         function isNull(value) {
