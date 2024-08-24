@@ -2,7 +2,7 @@
 @section('content')
     <section class="content">
         <div class="container-fluid">
-            <form method="POST" action="{{ route('save.party') }}" id="party_form">
+            <form method="POST" action="{{ route('save.party') }}" id="party_form" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="hiddenId">
                 <div class="row partydiv">
@@ -167,6 +167,17 @@
                                         <div class="input-group side">
                                             <input type="text" class="form-control" id="limit" name="limit">
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group row">
+                                        <label class="col-form-label party">Attachment</label>
+                                        <div class="input-group finput">
+                                            <input type="file" id="attachment" name="attachment"
+                                                accept=".png, .jpg, .jpeg" onchange="previewFile(event)">
+                                        </div>
+                                        <img id="preview" alt="Preview Image" style="display: none;max-width:200px"
+                                            class="mt-2">
                                     </div>
                                 </div>
                             </div>
@@ -364,6 +375,27 @@
             dateInput.setAttribute('min', today);
         });
 
+        function previewFile(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                const validImageExtensions = ['png', 'jpg', 'jpeg'];
+
+                if (validImageExtensions.includes(fileExtension)) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#preview').attr('src', e.target.result).show();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#preview').hide();
+                }
+            } else {
+                $('#preview').hide();
+            }
+        }
+
         $(document).ready(function() {
             partys();
             currancy();
@@ -517,6 +549,23 @@
             $("[name='website']").val(isNull(data.website));
             $("[name='zipcode']").val(isNull(data.zipcode));
 
+            if (data.attachment) {
+                const baseUrl = '/img/party';
+                const imageName = data.attachment;
+                const imageUrl = `${baseUrl}/${imageName}`;
+
+                const validImageExtensions = ['png', 'jpg', 'jpeg'];
+                const fileExtension = imageName.split('.').pop().toLowerCase();
+
+                if (validImageExtensions.includes(fileExtension)) {
+                    $('#preview').attr('src', imageUrl).show();
+                } else {
+                    $('#preview').hide();
+                }
+            } else {
+                $('#preview').hide();
+            }
+
             var countryId = isNull(data.country);
             var stateId = isNull(data.state);
             var cityId = isNull(data.city);
@@ -568,6 +617,7 @@
             $('#party_form')[0].reset();
             $('#state').prop('disabled', true);
             $('#city').prop('disabled', true);
+            document.getElementById('preview').style.display = 'none';
         }
 
         function isNull(value) {

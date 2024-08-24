@@ -27,6 +27,21 @@ class PartyMasterController extends Controller
             $user = auth()->user();
             if ($request->has('hiddenId') && !empty($request->input('hiddenId'))) {
                 $party = PartyMaster::find($request->hiddenId);
+
+                $fileName = $party->attachment;
+                $destinationPath = public_path('/img/party');
+
+                if ($request->hasFile('attachment')) {
+                    $image = $request->file('attachment');
+                    $imageName = time() . '-' . rand(1, 99) . '.' . $image->getClientOriginalExtension();
+                    $image->move($destinationPath, $imageName);
+
+                    if ($fileName && file_exists($destinationPath . '/' . $fileName)) {
+                        unlink($destinationPath . '/' . $fileName);
+                    }
+
+                    $party->attachment = $imageName;
+                }
                 // PurSaleEntry::where('party', $party->name)->update(['party' => $request->name]);
                 // PaymentOpening::where('party', $party->name)->update(['party' => $request->name]);
                 // Payment::where('party', $party->name)->update(['party' => $request->name]);
@@ -35,6 +50,14 @@ class PartyMasterController extends Controller
                 // PaymentTrans::where('account', $party->name)->update(['account' => $request->name]);
             } else {
                 $party = new PartyMaster();
+
+                if ($request->hasFile('attachment')) {
+                    $image = $request->file('attachment');
+                    $imageName = time() . '-' . rand(1, 99) . '.' . $image->getClientOriginalExtension();
+                    $destinationPath = public_path('/img/party');
+                    $image->move($destinationPath, $imageName);
+                    $party->attachment = $imageName;
+                }
             }
             // dd($party);
             $party->name = $request->name;
@@ -79,6 +102,7 @@ class PartyMasterController extends Controller
             $party->master_country_id = $user->master_country_id;
             $party->branch_id = $user->branch_id;
             $party->current_time = date('H:i:s');
+
             $party->save();
             return $this->successResponse([], 'Party save successfully');
         }
