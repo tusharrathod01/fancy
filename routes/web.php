@@ -4,6 +4,7 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PartyMasterController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\YearController;
 use Illuminate\Support\Facades\Route;
 
@@ -67,3 +68,8 @@ Route::post('save-party', [PartyMasterController::class, 'save_party'])->name('s
 Route::get('get-currancy', [PartyMasterController::class, 'getCurrancy'])->name('get.currancy');
 Route::get('/states/{countryId}', [PartyMasterController::class, 'getStates']);
 Route::get('/cities/{stateId}', [PartyMasterController::class, 'getCities']);
+
+//party report
+Route::get('/party-report', [ReportController::class, 'Party_report'])->name('party_report');
+Route::post('/get-party-report', [MasterController::class, 'Party_report'])->name('party.report');
+Route::delete('/party-delete', [MasterController::class, 'Party_delete'])->name('party.delete');

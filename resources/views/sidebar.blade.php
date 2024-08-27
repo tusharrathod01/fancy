@@ -69,6 +69,12 @@
                                     <p>Party</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('party_report') }}" class="nav-link">
+                                    <i class="nav-icon fa fa-users"></i>
+                                    <p>Party Report</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     @if (auth()->user()->user_type == 'sup_admin')

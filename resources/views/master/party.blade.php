@@ -637,11 +637,12 @@
         }
 
         function reset() {
+            $('#seach_Party').val('');
             $('#party_form')[0].reset();
             $('#state').prop('disabled', true);
             $('#city').prop('disabled', true);
             $('#preview').hide().attr('src', '');
-            $('#seach_Party').val('');
+            $('#seach').off('click');
         }
 
         function isNull(value) {

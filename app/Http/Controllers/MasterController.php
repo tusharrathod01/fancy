@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use Illuminate\Http\Request;
 use App\Models\Master;
+use App\Models\PartyMaster;
 use App\Traits\ApiResponser;
 
 class MasterController extends Controller
@@ -122,5 +123,52 @@ class MasterController extends Controller
     {
         $masters = Master::where('type', $type)->orderBy('priority')->get();
         return $this->successResponse($masters, 'imports successfully');
+    }
+
+    public function Party_report(Request $request)
+    {
+        $data = PartyMaster::select(
+            'party_masters.*',
+            'cities.name as city_name',
+            'states.name as state_name',
+            'countries.name as country_name'
+        )
+            ->leftJoin('cities', 'party_masters.city', '=', 'cities.id')
+            ->leftJoin('states', 'party_masters.state', '=', 'states.id')
+            ->leftJoin('countries', 'party_masters.country', '=', 'countries.id');
+
+        if ($request->has('party') && !empty($request->party)) {
+            $data = $data->where('party_masters.name', $request->party);
+        }
+        if ($request->has('account_type') && !empty($request->account_type)) {
+            $data = $data->where('party_masters.account_type', $request->account_type);
+        }
+
+        $data = $data->orderBy('party_masters.name')->get();
+        return $data;
+    }
+    public function Party_delete(Request $request)
+    {
+        try {
+            if (!empty($request->id)) {
+                $party = PartyMaster::find($request->id);
+                if (!empty($party)) {
+                    // $purchase = PurSaleEntry::where('party', $party->name)->first();
+                    // $payment = Payment::where('party', $party->name)->orwhere('account', $party->name)->first();
+                    if (empty($purchase) && empty($payment)) {
+                        $party->delete();
+                        return $this->successResponse([], 'Delete successfully');
+                    } else {
+                        return $this->errorResponse('Please Delete First Entry.', 200);
+                    }
+                } else {
+                    return $this->errorResponse('Party Not Found', 200);
+                }
+            } else {
+                return $this->errorResponse('Party Not Found', 200);
+            }
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(), 200);
+        }
     }
 }
