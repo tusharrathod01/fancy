@@ -25,7 +25,7 @@
             </div>
             <form method="POST" action="{{ route('save.party') }}" id="party_form" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="hiddenId">
+                <input type="hidden" name="hiddenId" id="hiddenId">
                 <div class="row partydiv">
                     <div class="col-md-6 pl-2 pr-2">
                         <div class="card partycard">
@@ -638,6 +638,7 @@
 
         function reset() {
             $('#seach_Party').val('');
+            $('#hiddenId').val('');
             $('#party_form')[0].reset();
             $('#state').prop('disabled', true);
             $('#city').prop('disabled', true);
