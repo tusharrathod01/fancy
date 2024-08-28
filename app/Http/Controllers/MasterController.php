@@ -155,12 +155,15 @@ class MasterController extends Controller
                 if (!empty($party)) {
                     // $purchase = PurSaleEntry::where('party', $party->name)->first();
                     // $payment = Payment::where('party', $party->name)->orwhere('account', $party->name)->first();
-                    if (empty($purchase) && empty($payment)) {
-                        $party->delete();
-                        return $this->successResponse([], 'Delete successfully');
-                    } else {
-                        return $this->errorResponse('Please Delete First Entry.', 200);
+                    // if (empty($purchase) && empty($payment)) {
+                    if (file_exists(public_path('/img/party') . '/' . $party->attachment)) {
+                        unlink(public_path('/img/party') . '/' . $party->attachment);
                     }
+                    $party->delete();
+                    return $this->successResponse([], 'Delete successfully');
+                    // } else {
+                    //     return $this->errorResponse('Please Delete First Entry.', 200);
+                    // }
                 } else {
                     return $this->errorResponse('Party Not Found', 200);
                 }

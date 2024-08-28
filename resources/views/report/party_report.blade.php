@@ -114,7 +114,7 @@
                                         <button type="reset" onclick="reset()" class="btn">RESET</button>
                                         <button type="button" class="btn custom" id="download-xlsx">
                                             <span class="mr-1 import_loader" style="display: none"><i
-                                                    class="fa fa-spinner fa-spin"></i></span>DETAIL PRINT
+                                                    class="fa fa-spinner fa-spin"></i></span>PRINT XLSX
                                         </button>
                                     </div>
                                 </div>
