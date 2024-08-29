@@ -290,8 +290,8 @@
                     {
                         title: "DELETE",
                         field: "id",
-                        headerFilter: "input",
                         hozAlign: "center",
+                        headerSort:false,
                         download: false,
                         formatter: function(cell, formatterParams, onRendered) {
                             var row = cell.getData();
