@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\CurrencyMaster;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponser;
@@ -18,14 +19,43 @@ class CurrencyController extends Controller
                 $user = auth()->user();
 
                 foreach ($request->masters as $d) {
-
-
                     if (!empty($d['name'])) {
 
                         if (isset($d['id'])) {
                             $masters = CurrencyMaster::where('type', $d['type'])->where('id', $d['id'])->first();
+                            $old_data = $masters->toArray();
+                            $types = 'Currency Master Update';
+                            $hasDifferences = (
+                                (isset($masters->name) && $masters->name != $d['name']) ||
+                                (isset($masters->rate) && $masters->rate != $d['rate'])
+                            );
+
+                            if ($hasDifferences) {
+                                $data['comment'] = $d['type'] . ' Update';
+                                $data['types'] = $types;
+                                $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                                $data['inv_no'] = $request->inv_no;
+                                $data['party'] =  $request->party;
+                                $data['old_data'] =  json_encode($old_data);
+                                $data['new_data'] = json_encode($d);
+                                $data['pur_sale_type'] = 'master';
+
+                                Activity::add($data);
+                            }
                         } else {
                             $masters = new CurrencyMaster();
+                            $types = 'Currency Master Add';
+
+                            $data['comment'] = $d['type'] . ' Add';
+                            $data['types'] = $types;
+                            $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                            $data['inv_no'] = $request->inv_no;
+                            $data['party'] =  $request->party;
+                            $data['old_data'] =  json_encode('');
+                            $data['new_data'] = json_encode($d);
+                            $data['pur_sale_type'] = 'master';
+
+                            Activity::add($data);
                         }
 
                         $masters->name = $d['name'];

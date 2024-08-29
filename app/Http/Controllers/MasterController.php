@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Country;
 use Illuminate\Http\Request;
 use App\Models\Master;
@@ -69,8 +70,44 @@ class MasterController extends Controller
 
                         if (isset($d['id'])) {
                             $masters = Master::where('type', $d['type'])->where('id', $d['id'])->first();
+                            $old_data = $masters->toArray();
+                            $types = 'Master Update';
+                            $hasDifferences = (
+                                (isset($masters->name) && $masters->name != $d['name']) ||
+                                (isset($masters->color) && $masters->color != $d['color']) ||
+                                (isset($masters->intensity) && $masters->intensity != $d['intensity']) ||
+                                (isset($masters->overtone) && $masters->overtone != $d['overtone']) ||
+                                (isset($masters->p_from) && $masters->p_from != $d['p_from']) ||
+                                (isset($masters->p_to) && $masters->p_to != $d['p_to']) ||
+                                (isset($masters->st_name) && $masters->st_name != $d['st_name'])
+                            );
+
+                            if ($hasDifferences) {
+                                $data['comment'] = $d['type'] . ' Update';
+                                $data['types'] = $types;
+                                $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                                $data['inv_no'] = $request->inv_no;
+                                $data['party'] =  $request->party;
+                                $data['old_data'] =  json_encode($old_data);
+                                $data['new_data'] = json_encode($d);
+                                $data['pur_sale_type'] = 'master';
+
+                                Activity::add($data);
+                            }
                         } else {
                             $masters = new Master();
+                            $types = 'Master Add';
+
+                            $data['comment'] = $d['type'] . ' Add';
+                            $data['types'] = $types;
+                            $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                            $data['inv_no'] = $request->inv_no;
+                            $data['party'] =  $request->party;
+                            $data['old_data'] =  json_encode('');
+                            $data['new_data'] = json_encode($d);
+                            $data['pur_sale_type'] = 'master';
+
+                            Activity::add($data);
                         }
 
                         $masters->name = $d['name'];
@@ -105,6 +142,7 @@ class MasterController extends Controller
                         if (array_key_exists('m_c_id', $d)) {
                             $masters->m_c_id = $d['m_c_id'];
                         }
+
                         $masters->save();
                     }
                 }

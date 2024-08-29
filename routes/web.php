@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MasterController;
@@ -73,3 +74,9 @@ Route::get('/cities/{stateId}', [PartyMasterController::class, 'getCities']);
 Route::get('/party-report', [ReportController::class, 'Party_report'])->name('party_report');
 Route::post('/get-party-report', [MasterController::class, 'Party_report'])->name('party.report');
 Route::delete('/party-delete', [MasterController::class, 'Party_delete'])->name('party.delete');
+
+//log activity
+Route::get('my-activity', [ActivityController::class, 'myActivity'])->name('my.activity');
+Route::post('get-my-activity', [ActivityController::class, 'getMyActivity'])->name('get.my.activity');
+Route::post('get-activity-detail', [ActivityController::class, 'getMyActivityDetail'])->name('get.my.activity.detail');
+

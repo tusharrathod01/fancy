@@ -93,8 +93,14 @@
                             <p>Users</p>
                         </a>
                     </li>
-                    <li class="nav-item" style="margin-bottom: 65px;">
+                    <li class="nav-item">
                         <a href="{{ route('user-activity') }}" class="nav-link">
+                            <i class="nav-icon fas fa-history"></i>
+                            <p>Log Activity</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" style="margin-bottom: 65px;">
+                        <a href="{{ route('my.activity') }}" class="nav-link">
                             <i class="nav-icon fas fa-history"></i>
                             <p>Users Activity</p>
                         </a>
