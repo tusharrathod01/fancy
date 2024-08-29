@@ -41,28 +41,12 @@ class ActivityController extends Controller
 
     public function getMyActivityDetail(Request $request)
     {
-
         $activity = Activity::find($request->id);
         if ($activity->pur_sale_type == 'master') {
             return view('activity.master', compact('activity'));
         }
-        // if ($activity->pur_sale_type == 'purchase') {
-        //     return view('activity.purchase', compact('activity'));
-        // }
-        // if ($activity->pur_sale_type == 'sale') {
-        //     return view('activity.sale', compact('activity'));
-        // }
-        // if ($activity->pur_sale_type == 'Consignment') {
-        //     return view('activity.consignment', compact('activity'));
-        // }
-        // if ($activity->pur_sale_type == 'consignment_return') {
-        //     return view('activity.consignment_return', compact('activity'));
-        // }
-        // if ($activity->pur_sale_type == 'branch') {
-        //     return view('activity.branch', compact('activity'));
-        // }
-
-
-        // return view('activity_detail', compact('activity'));
+        if ($activity->pur_sale_type == 'year') {
+            return view('activity.year', compact('activity'));
+        }
     }
 }

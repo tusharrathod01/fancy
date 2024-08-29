@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponser;
 use App\Models\Year;
@@ -66,8 +67,41 @@ class YearController extends Controller
                         if (!empty($trans['year'])) {
                             if (isset($trans['id'])) {
                                 $year = Year::find($trans['id']);
+                                $old_data = $year->toArray();
+                                $types = 'Year Update';
+                                $hasDifferences = (
+                                    (isset($year->year) && $year->year != $trans['year']) ||
+                                    (isset($year->status) && $year->status != $trans['status']) ||
+                                    (isset($year->from_date) && $year->from_date != date('Y-m-d', strtotime($trans['from_date']))) ||
+                                    (isset($year->to_date) && $year->to_date != date('Y-m-d', strtotime($trans['to_date'])))
+                                );
+
+                                if ($hasDifferences) {
+                                    $data['comment'] = '';
+                                    $data['types'] = $types;
+                                    $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                                    $data['inv_no'] = $request->inv_no;
+                                    $data['party'] =  $request->party;
+                                    $data['old_data'] =  json_encode($old_data);
+                                    $data['new_data'] = json_encode($trans);
+                                    $data['pur_sale_type'] = 'year';
+
+                                    Activity::add($data);
+                                }
                             } else {
                                 $year = new Year();
+                                $types = 'Year Add';
+
+                                $data['comment'] = '';
+                                $data['types'] = $types;
+                                $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                                $data['inv_no'] = $request->inv_no;
+                                $data['party'] =  $request->party;
+                                $data['old_data'] =  json_encode('');
+                                $data['new_data'] = json_encode($trans);
+                                $data['pur_sale_type'] = 'year';
+
+                                Activity::add($data);
                             }
                             $year->year = $trans['year'];
                             $year->status = $trans['status'];
