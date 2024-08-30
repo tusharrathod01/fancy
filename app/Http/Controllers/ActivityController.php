@@ -48,5 +48,8 @@ class ActivityController extends Controller
         if ($activity->pur_sale_type == 'year') {
             return view('activity.year', compact('activity'));
         }
+        if ($activity->pur_sale_type == 'party') {
+            return view('activity.party', compact('activity'));
+        }
     }
 }

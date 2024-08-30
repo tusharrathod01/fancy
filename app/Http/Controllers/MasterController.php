@@ -197,6 +197,23 @@ class MasterController extends Controller
                     if (file_exists(public_path('/img/party') . '/' . $party->attachment)) {
                         unlink(public_path('/img/party') . '/' . $party->attachment);
                     }
+
+                    $types = 'Party Delete';
+                    $pdata = $party->toArray();
+                    unset($pdata['attachment']);
+                    $pdata['attachment_name'] = $party->attachment;
+
+                    $data['comment'] = '';
+                    $data['types'] = $types;
+                    $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                    $data['inv_no'] = $request->inv_no;
+                    $data['party'] =  $party->name;
+                    $data['old_data'] =  json_encode($pdata);
+                    $data['new_data'] = json_encode('');
+                    $data['pur_sale_type'] = 'party';
+
+                    Activity::add($data);
+
                     $party->delete();
                     return $this->successResponse([], 'Delete successfully');
                     // } else {

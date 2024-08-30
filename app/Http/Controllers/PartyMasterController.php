@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\CurrencyMaster;
@@ -27,7 +28,7 @@ class PartyMasterController extends Controller
             $user = auth()->user();
             if ($request->has('hiddenId') && !empty($request->input('hiddenId'))) {
                 $party = PartyMaster::find($request->hiddenId);
-
+                $old_data = $party->toArray();
                 $fileName = $party->attachment;
                 $destinationPath = public_path('/img/party');
 
@@ -39,15 +40,38 @@ class PartyMasterController extends Controller
                     if ($fileName && file_exists($destinationPath . '/' . $fileName)) {
                         unlink($destinationPath . '/' . $fileName);
                     }
-
                     $party->attachment = $imageName;
                 }
+
                 // PurSaleEntry::where('party', $party->name)->update(['party' => $request->name]);
                 // PaymentOpening::where('party', $party->name)->update(['party' => $request->name]);
                 // Payment::where('party', $party->name)->update(['party' => $request->name]);
                 // Payment::where('account', $party->name)->update(['account' => $request->name]);
                 // PaymentTrans::where('party', $party->name)->update(['party' => $request->name]);
                 // PaymentTrans::where('account', $party->name)->update(['account' => $request->name]);
+
+                $types = 'Party Update';
+                $pdata = $request->all();
+                unset($pdata['_token']);
+                unset($pdata['hiddenId']);
+                unset($pdata['attachment']);
+
+                if ($request->hasFile('attachment')) {
+                    $pdata['attachment_name'] = $imageName;
+                } else {
+                    $pdata['attachment_name'] = $fileName;
+                }
+
+                $data['comment'] = '';
+                $data['types'] = $types;
+                $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                $data['inv_no'] = $request->inv_no;
+                $data['party'] =  $request->name;
+                $data['old_data'] =  json_encode($old_data);
+                $data['new_data'] = json_encode($pdata);
+                $data['pur_sale_type'] = 'party';
+
+                Activity::add($data);
             } else {
                 $party = new PartyMaster();
 
@@ -58,8 +82,29 @@ class PartyMasterController extends Controller
                     $image->move($destinationPath, $imageName);
                     $party->attachment = $imageName;
                 }
+
+                $types = 'Party Add';
+                $pdata = $request->all();
+                unset($pdata['_token']);
+                unset($pdata['hiddenId']);
+                unset($pdata['attachment']);
+                if ($request->hasFile('attachment')) {
+                    $pdata['attachment_name'] = $imageName;
+                } else {
+                    $pdata['attachment_name'] = null;
+                }
+
+                $data['comment'] = '';
+                $data['types'] = $types;
+                $data['bill_no'] = !empty($request->bill_no) ? $request->bill_no : '';
+                $data['inv_no'] = $request->inv_no;
+                $data['party'] =  $request->name;
+                $data['old_data'] =  json_encode('');
+                $data['new_data'] = json_encode($pdata);
+                $data['pur_sale_type'] = 'party';
+
+                Activity::add($data);
             }
-            // dd($party);
             $party->name = $request->name;
             $party->currency = $request->currency;
             $party->rate = $request->rate;

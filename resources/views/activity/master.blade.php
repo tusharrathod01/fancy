@@ -11,6 +11,14 @@
         width: 100% !important;
     }
 
+    th {
+        padding: 0 8px !important;
+    }
+
+    td {
+        padding: 0 4px !important;
+    }
+
     .l1,
     .l2,
     .rate {
@@ -66,8 +74,8 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col-12 row">
-                        <div class="card col-md-6 pr-2">
+                    @if ($activity_data)
+                        <div class="card col-md-12 mb-4">
                             <div class="card-header m-auto">
                                 <h5 class="card-title">Old Data</h5>
                             </div>
@@ -103,16 +111,14 @@
                                                 <td>{{ $activity_data->st_name ?? '' }}</td>
                                                 <td>{{ $activity_data->rate ?? '' }}</td>
                                             </tr>
-                                        @else
-                                            <tr>
-                                                <td colspan="2">No data available</td>
-                                            </tr>
                                         @endif
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div class="card col-md-6 pl-2">
+                    @endif
+                    @if ($new_activity_data)
+                        <div class="card col-md-12">
                             <div class="card-header m-auto">
                                 <h5 class="card-title">New Data</h5>
                             </div>
@@ -148,16 +154,12 @@
                                                 <td>{{ $new_activity_data->st_name ?? '' }}</td>
                                                 <td>{{ $new_activity_data->rate ?? '' }}</td>
                                             </tr>
-                                        @else
-                                            <tr>
-                                                <td colspan="2">No data available</td>
-                                            </tr>
                                         @endif
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
