@@ -167,7 +167,7 @@
                                                 <td>{{ $activity_data->opening_bal ?? '' }}</td>
                                                 <td>{{ $activity_data->debit_credit ?? '' }}</td>
                                                 <td>{{ $activity_data->remark ?? '' }}</td>
-                                                <td>{{ $activity_data->attachment_name ?? '' }}</td>
+                                                <td>{{ $activity_data->attachment_name ?? $activity_data->attachment }}</td>
                                             </tr>
                                         @endif
                                     </tbody>
